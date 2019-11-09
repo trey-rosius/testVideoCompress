@@ -38,64 +38,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   void initState() {
     super.initState();
-    readCounter().then((int value) {
-      setState(() {
-        _counter = value;
-      });
 
-    });
     listener = () {
 
       setState(() {});
     };
 
   }
-  Future<String> get _localPath async {
-    final directory = await getApplicationDocumentsDirectory();
 
-    return directory.path;
-  }
-
-  Future<File> get _localFile async {
-    final path = await _localPath;
-    return File('$path/counter.txt');
-  }
-
-  Future<File> get _localFileVideo async {
-    final path = await _localPath;
-    return File('$path/temp.mp4');
-  }
-
-  Future<int> readCounter() async {
-    try {
-      final file = await _localFile;
-
-      // Read the file
-      String contents = await file.readAsString();
-
-      return int.parse(contents);
-    } catch (e) {
-      // If encountering an error, return 0
-      return 0;
-    }
-  }
-
-  Future<File> writeCounter(int counter) async {
-    final file = await _localFile;
-
-
-    // Write the file
-    return file.writeAsString('$counter');
-  }
-
-  Future<File> _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-
-    // Write the variable as a string to the file.
-    return writeCounter(_counter);
-  }
   void _onVideoButtonPressed(ImageSource source) {
     setState(() {
       if (_controller != null) {
@@ -110,6 +60,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             setState(() {
               mainFile = file;
 
+
               _controller = VideoPlayerController.file(file)
                 ..addListener(listener)
                 ..setVolume(1.0)
@@ -119,25 +70,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             });
 
 
-         //   var dir = await path_provider.getApplicationDocumentsDirectory();
-          //  var targetPath = dir.absolute.path + "/temp.mp4";
-          //  Directory appDocDir = await getApplicationDocumentsDirectory();
+            var dir = await path_provider.getApplicationDocumentsDirectory();
+            var targetPath = dir.absolute.path + "/temp.mp4";
 
-         //   print("all directories"+appDocDir.path.toString());
-
-            final videoPath = await _localFileVideo;
-
-            print("path is "+videoPath.path);
-
-            String targetPath = videoPath.path;
 
 
          //   var arguments = ["-i", file.path, "-c:v", "mpeg4", targetPath];
             _flutterFFmpeg.execute("-i "+file.path+" -c:v mpeg4 "+targetPath).then((rc) => print("FFmpeg process exited with rc $rc"));
 
-            _flutterFFmpeg.getMediaInformation(targetPath).then((info){
-              print(info);
-            });
+           // _flutterFFmpeg.getMediaInformation(targetPath).then((info){
+            //  print(info);
+          //  });
 /*
             _flutterFFmpeg.getMediaInformation(file.path).then((info) {
               print("Media Information");
